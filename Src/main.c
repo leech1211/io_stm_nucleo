@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <stdbool.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -54,6 +55,76 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define CHECK_BIT(var, pos) ((var) & (1 << (pos)))
+uint8_t ShiftRegisterValue = 0x1;
+bool DirectionLeft = false;
+
+void ShiftRegister(void)
+{
+
+	//오른쪽으로 점멸인데 가장 오른쪽 점멸된 경우
+	if(ShiftRegisterValue == 0x1 && DirectionLeft == false)
+	{
+		//다시 왼쪽으로 점멸
+		DirectionLeft = true;
+	}
+	//왼쪽으로 점멸인데 가장 왼쪽 점멸된 경우
+	else if(ShiftRegisterValue == 0x4 && DirectionLeft == true)
+	{
+		//다시 오른쪽으로 점멸
+		DirectionLeft = false;
+	}
+
+	if(DirectionLeft == true)
+	{
+		ShiftRegisterValue <<= 1;
+	}
+	else if(DirectionLeft == false)
+	{
+		ShiftRegisterValue >>= 1;
+	}
+
+}
+
+void BtnPressedShiftRegister(void)
+{
+	// ShiftRegisterValue 0번 비트 확인
+	if (CHECK_BIT(ShiftRegisterValue, 0))
+	{
+	    //1일 때 실행할 코드
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+	}
+	else
+	{
+	    //0일 때 실행할 코드
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
+	}
+
+	// ShiftRegisterValue 1번 비트 확인
+	if (CHECK_BIT(ShiftRegisterValue, 1))
+	{
+		//1일 때 실행할 코드
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_SET);
+	}
+	else
+	{
+		//0일 때 실행할 코드
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_RESET);
+	}
+
+	// ShiftRegisterValue 2번 비트 확인
+	if (CHECK_BIT(ShiftRegisterValue, 2))
+	{
+		//1일 때 실행할 코드
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_14,GPIO_PIN_SET);
+	}
+	else
+	{
+		//0일 때 실행할 코드
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_14,GPIO_PIN_RESET);
+	}
+}
+
 
 /* USER CODE END 0 */
 
@@ -92,21 +163,48 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  bool pressed = false;    //버튼을 방금 눌렀는지 즉, 지금 방향을 바꿔야 하는지
   while (1)
     {
       /* USER CODE END WHILE */
-  	  if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_RESET)
-  		{
-  			HAL_Delay(20);  // debounce
 
-  			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_RESET)
-  			{
-  				HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);  // LED1 toggle
+	  //눌리지 않은 경우
+	  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET)
+	  {
+		  //디바운싱
+		  HAL_Delay(20);
+		  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET)
+		  {
+			  //안눌려있을 때 마다 방향을 바꾸는 것이 아닌 떼는 순간 한번만 방향을 바꿈
+			  if(pressed == true)
+			  {
+				  pressed = false;
+				  DirectionLeft = !DirectionLeft;
+			  }
+			  ShiftRegister();
+			  BtnPressedShiftRegister();
+		  }
 
-  				// 버튼 떼기 대기
-  				while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == GPIO_PIN_RESET);
-  			}
-  		}
+	  }
+	  else if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_SET)    //눌린 경우
+	  {
+		  //디바운싱
+		  HAL_Delay(20);
+		  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_SET)
+		  {
+			  //눌려있을 때 마다 방향을 바꾸는 것이 아닌 누른 한번만 방향을 바꿈
+			  if(pressed == false)
+			  {
+				  pressed = true;
+				  DirectionLeft = !DirectionLeft;
+			  }
+
+			  ShiftRegister();
+			  BtnPressedShiftRegister();
+		  }
+	  }
+	  HAL_Delay(1000);
 
       /* USER CODE BEGIN 3 */
     }
