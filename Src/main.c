@@ -165,6 +165,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   bool pressed = false;    //버튼을 방금 눌렀는지 즉, 지금 방향을 바꿔야 하는지
+  uint32_t debounce_Tick = HAL_GetTick();
+  uint32_t LED_Tick = HAL_GetTick();
   while (1)
     {
       /* USER CODE END WHILE */
@@ -173,38 +175,48 @@ int main(void)
 	  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET)
 	  {
 		  //디바운싱
-		  HAL_Delay(20);
-		  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET)
+		  //HAL_Delay(20);
+		  if(HAL_GetTick() - debounce_Tick >= 20)
 		  {
-			  //안눌려있을 때 마다 방향을 바꾸는 것이 아닌 떼는 순간 한번만 방향을 바꿈
-			  if(pressed == true)
+			  debounce_Tick = HAL_GetTick();
+			  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET)
 			  {
-				  pressed = false;
-				  DirectionLeft = !DirectionLeft;
+				  //안눌려있을 때 마다 방향을 바꾸는 것이 아닌 떼는 순간 한번만 방향을 바꿈
+				  if(pressed == true)
+				  {
+					  pressed = false;
+					  DirectionLeft = !DirectionLeft;
+				  }
 			  }
-			  ShiftRegister();
-			  BtnPressedShiftRegister();
 		  }
 
 	  }
 	  else if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_SET)    //눌린 경우
 	  {
 		  //디바운싱
-		  HAL_Delay(20);
-		  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_SET)
+		  //HAL_Delay(20);
+		  if(HAL_GetTick() - debounce_Tick >= 20)
 		  {
-			  //눌려있을 때 마다 방향을 바꾸는 것이 아닌 누른 한번만 방향을 바꿈
-			  if(pressed == false)
+			  debounce_Tick = HAL_GetTick();
+			  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_SET)
 			  {
-				  pressed = true;
-				  DirectionLeft = !DirectionLeft;
+				  //눌려있을 때 마다 방향을 바꾸는 것이 아닌 누른 한번만 방향을 바꿈
+				  if(pressed == false)
+				  {
+					  pressed = true;
+					  DirectionLeft = !DirectionLeft;
+				  }
 			  }
-
-			  ShiftRegister();
-			  BtnPressedShiftRegister();
 		  }
+
 	  }
-	  HAL_Delay(1000);
+	  //HAL_Delay(1000);
+	  if(HAL_GetTick() - LED_Tick >= 1000)
+	  {
+		  LED_Tick = HAL_GetTick();
+		  ShiftRegister();
+		  BtnPressedShiftRegister();
+	  }
 
       /* USER CODE BEGIN 3 */
     }
