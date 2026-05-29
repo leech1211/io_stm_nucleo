@@ -86,41 +86,88 @@ void ShiftRegister(void)
 
 }
 
-void BtnPressedShiftRegister(void)
+void DisplayLED1(void)
 {
 	// ShiftRegisterValue 0번 비트 확인
 	if (CHECK_BIT(ShiftRegisterValue, 0))
 	{
 	    //1일 때 실행할 코드
-		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+		uint32_t LED_Toggle_Tick = HAL_GetTick();    //100ms마다 토글하는 tick
+		int i = 0;
+		//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+		while(true)
+		{
+			if(HAL_GetTick() - LED_Toggle_Tick >= 100)
+			{
+				HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_0);
+				LED_Toggle_Tick = HAL_GetTick();
+				i++;
+			}
+
+			if(i >= 10)
+				break;
+		}
 	}
 	else
 	{
 	    //0일 때 실행할 코드
 		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);
 	}
+}
 
+void DisplayLED2(void)
+{
 	// ShiftRegisterValue 1번 비트 확인
 	if (CHECK_BIT(ShiftRegisterValue, 1))
 	{
-		//1일 때 실행할 코드
-		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_SET);
+	    //1일 때 실행할 코드
+		uint32_t LED_Toggle_Tick = HAL_GetTick();    //100ms마다 토글하는 tick
+		int i = 0;
+		//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+		while(true)
+		{
+			if(HAL_GetTick() - LED_Toggle_Tick >= 100)
+			{
+				HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_7);
+				LED_Toggle_Tick = HAL_GetTick();
+				i++;
+			}
+
+			if(i >= 10)
+				break;
+		}
 	}
 	else
 	{
-		//0일 때 실행할 코드
+	    //0일 때 실행할 코드
 		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_RESET);
 	}
-
-	// ShiftRegisterValue 2번 비트 확인
+}
+void DisplayLED3(void)
+{
+	// ShiftRegisterValue 0번 비트 확인
 	if (CHECK_BIT(ShiftRegisterValue, 2))
 	{
-		//1일 때 실행할 코드
-		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_14,GPIO_PIN_SET);
+	    //1일 때 실행할 코드
+		uint32_t LED_Toggle_Tick = HAL_GetTick();    //100ms마다 토글하는 tick
+		int i = 0;
+		//HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_SET);
+		while(true)
+		{
+			if(HAL_GetTick() - LED_Toggle_Tick >= 100)
+			{
+				HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_14);
+				LED_Toggle_Tick = HAL_GetTick();
+				i++;
+			}
+
+			if(i >= 10)
+				break;
+		}
 	}
 	else
 	{
-		//0일 때 실행할 코드
+	    //0일 때 실행할 코드
 		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_14,GPIO_PIN_RESET);
 	}
 }
@@ -215,7 +262,9 @@ int main(void)
 	  {
 		  LED_Tick = HAL_GetTick();
 		  ShiftRegister();
-		  BtnPressedShiftRegister();
+		  DisplayLED1();
+		  DisplayLED2();
+		  DisplayLED3();
 	  }
 
       /* USER CODE BEGIN 3 */
