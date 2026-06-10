@@ -16,7 +16,7 @@
 - example 9: 버튼 1초 누르면 노란색 LED만 1초간 켜짐, 버튼 3초간 누르면 파랑색 LED만 1초간 켜짐, 버튼 5초간 누르면 빨간색 LED만 1초간 켜짐 
 - example 10: 버튼 1회 누르면 노란색 LED만 1초간 켜짐, 버튼 2회 누르면 파랑색 LED만 1초간 켜짐, 버튼 3회 누르면 빨간색 LED만 1초간 켜짐
 
-###심화 GPIO
+### 심화 GPIO
  - example 1 : L9110팬 모듈 양방향 회전
  - example 2 : 9g 서보 양방향 회전
  - example 3 : 5v 스테핑모터 양방향 회전
@@ -27,7 +27,7 @@
  - example 6 : 터치패드 입력 하면 7-segment에 숫자 나타나도록
  - example 7 : 버튼 클릭 시 7-segment 계수기 처럼 증가
  
-####지렁이 게임
+#### 지렁이 게임
  - example 1 : LED 매트릭스에 GMOV 그리기
  - example 2 :LED 매트릭스 1,1 ~16,8 중 하나의 LED를 켜고 그 좌표를 7-segment에 출력
  - example 3 : console에서 좌표 입력 하여 LED 매트릭스 특정 좌표에 값 표출
