@@ -62,6 +62,7 @@
 #### Communication
 ##### UART
 ##### SPI
+ - example 1 : ADXL345
 ##### I2C
 
 
